@@ -1,3 +1,4 @@
+// 默认导出跟默认导入可以不同名，但是按需要同名
 import request from '@/utils/request'
 
 // 登录函数

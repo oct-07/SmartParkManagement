@@ -27,7 +27,11 @@ export default {
   methods: {
     // 退出登录
     logout() {
+      // 清除token信息
+      this.$store.commit('user/removeToken')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      console.log(this.$route.fullPath)
+      console.log('清除token')
     }
   }
 }

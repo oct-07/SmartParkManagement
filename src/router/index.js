@@ -114,13 +114,17 @@ export const routes = [
   }
 ]
 
+// 创建vue实例
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   mode: 'history',
+  // 切换的时候处于顶端
   scrollBehavior: () => ({ y: 0 }),
+  //  路由配置规则
   routes: routes
 })
 
+// 调用封装的方法，直接创建路由实例
 const router = createRouter()
 
 // 重置路由方法

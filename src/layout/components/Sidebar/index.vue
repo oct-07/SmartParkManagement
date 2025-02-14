@@ -28,6 +28,8 @@ export default {
   components: { SidebarItem, Logo },
   computed: {
     routes() {
+      console.log(this.$router.options.routes)
+      // 获取的是创建路由对象时传入的路由规则
       return this.$router.options.routes
     },
     activeMenu() {

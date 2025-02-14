@@ -1,4 +1,6 @@
 import axios from 'axios'
+import store from '@/store'
+// axios.create() 方法用于创建一个自定义的 Axios 实例，返回一个 Axios 实例对象，并将其赋值给 service。
 const service = axios.create({
   baseURL: 'https://api-hmzs.itheima.net/v1',
   timeout: 5000 // request timeout
@@ -7,6 +9,12 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
+    // config携带的就是请求信息，并且return不能省略
+    // 这个函数通常配置请求头携带token
+    const token = store.state.token
+    if (token) {
+      config.headers.Authorization = token
+    }
     return config
   },
   error => {
@@ -15,6 +23,7 @@ service.interceptors.request.use(
 )
 
 // 响应拦截器
+// //执行时机：当服务端返回数据的时候。数据流转的第一站就是响应拦截器.
 service.interceptors.response.use(
   response => {
     return response.data
