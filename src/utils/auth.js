@@ -4,15 +4,18 @@ import Cookies from 'js-cookie'
 import { TOKEN_KEY } from '@/constants/KEY'
 // 获取token的方法
 export function getToken() {
+  console.log('getToke')
   return Cookies.get(TOKEN_KEY)
 }
 
 // 设置方法
 export function setToken(token) {
+  console.log('setToke')
   return Cookies.set(TOKEN_KEY, token)
 }
 
 // 删除方法
 export function removeToken() {
+  console.log('removeToken')
   return Cookies.remove(TOKEN_KEY)
 }

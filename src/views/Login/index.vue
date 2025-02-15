@@ -71,25 +71,21 @@ export default {
       console.log(this.$refs['form'])
       this.$refs['form'].validate(async(valid) => {
         if (valid) {
-          try {
-            await this.$store.dispatch('user/loginActions', this.loginForm)
-            // 判断有没有点击记住我
-            if (this.rememberMe) {
-              console.log('----' + JSON.stringify(this.loginForm))
-              localStorage.setItem(FORM_KEY, JSON.stringify(this.loginForm))
-            } else {
-              localStorage.removeItem(FORM_KEY)
-            }
-            // 实现那个页面退出，跳转到那个页面
-            if (this.$route.query.redirect) {
-              console.log('查询页面')
-              console.log(this.$route.query.redirect)
-              this.$router.push(this.$route.query.redirect)
-            } else {
-              this.$router.push('/')
-            }
-          } catch (error) {
-            this.$message.error(error.response.data.error)
+          await this.$store.dispatch('user/loginActions', this.loginForm)
+          // 判断有没有点击记住我
+          if (this.rememberMe) {
+            console.log('----' + JSON.stringify(this.loginForm))
+            localStorage.setItem(FORM_KEY, JSON.stringify(this.loginForm))
+          } else {
+            localStorage.removeItem(FORM_KEY)
+          }
+          // 实现那个页面退出，跳转到那个页面
+          if (this.$route.query.redirect) {
+            console.log('查询页面')
+            console.log(this.$route.query.redirect)
+            this.$router.push(this.$route.query.redirect)
+          } else {
+            this.$router.push('/')
           }
         } else {
           console.log('error submit!!')
