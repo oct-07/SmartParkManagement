@@ -18,6 +18,11 @@ export const routes = [
     redirect: '/workbench'
   },
   {
+    path: '/car/monthCard',
+    component: () => import('@/views/Car/CarCard/addmonthcard.vue')
+
+  },
+  {
     path: '/workbench',
     component: Layout,
     children: [{

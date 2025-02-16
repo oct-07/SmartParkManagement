@@ -4,7 +4,7 @@
     <div class="box">
       <div class="title">智慧园区-登录</div>
       <!-- 表单校验 -->
-      <!-- 1.el-form :model对应的值是表单对应的收集数据的对象
+      <!-- 1.el-form :modelS表单对应的收集数据的对象
        2.el-form:rules对应的校验规则→
       3.el-form-item（表单域） prop表示要校验哪个字段
       4.表单元素(el-input、el-checkbox...)v-model 双向绑定，获取输入值 -->
