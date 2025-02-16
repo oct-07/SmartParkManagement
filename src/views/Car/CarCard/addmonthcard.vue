@@ -1,4 +1,5 @@
 <script>
+import { addMonthCardAPI } from '@/api/card'
 export default {
   name: 'CardMonth',
   data() {
@@ -82,9 +83,23 @@ export default {
       this.$refs.carInfoForm.validate((valid) => {
         console.log(this.carInfoForm + '这里呢')
         if (!valid) return
-        this.$refs.feeInfoForm.validate((valid) => {
+        this.$refs.feeInfoForm.validate(async(valid) => {
           if (!valid) { return }
           console.log('调用接口')
+          // 将两层数据通过解构合并
+          const requestData = {
+            ...this.carInfoForm,
+            ...this.feeForm,
+            cardStartDate: this.feeForm.payTime[0],
+            cardEndDate: this.feeForm.payTime[1]
+          }
+          // 多字段不行，报400错误
+          delete requestData.payTime
+          console.log(requestData)
+          const res = await addMonthCardAPI(requestData)
+          console.log(res)
+          this.$message.success('月卡添加成功')
+          this.$router.back()
         })
       })
     }
@@ -128,6 +143,8 @@ export default {
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                format="yyyy 年 MM 月 dd 日"
+                value-format="yyyy-MM-dd"
               />
             </el-form-item>
             <el-form-item label="支付金额" prop="paymentAmount">
