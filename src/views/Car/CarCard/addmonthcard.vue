@@ -102,6 +102,12 @@ export default {
           this.$router.back()
         })
       })
+    },
+    // 重置表单
+    // resetForm()只能重置带有prop的
+    resetForm() {
+      this.$refs.carInfoForm.resetFields()
+      this.$refs.feeInfoForm.resetFields()
     }
   }
 
@@ -167,7 +173,7 @@ export default {
     </main>
     <footer class="add-footer">
       <div class="btn-container">
-        <el-button>重置</el-button>
+        <el-button @click="resetForm">重置</el-button>
         <el-button type="primary" @click="confirmAdd">确定</el-button>
       </div>
     </footer>
