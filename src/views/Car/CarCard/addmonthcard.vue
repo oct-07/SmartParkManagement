@@ -1,5 +1,5 @@
 <script>
-import { addMonthCardAPI } from '@/api/card'
+import { addMonthCardAPI, getCardDetailDataAPI, editorCardAPI } from '@/api/card'
 export default {
   name: 'CardMonth',
   data() {
@@ -68,7 +68,30 @@ export default {
       ]
     }
   },
+  computed: {
+    id() {
+      return this.$route.query.id
+    }
+  },
+  created() {
+    if (this.id) {
+      this.getCardDetailData()
+    }
+  },
   methods: {
+    // 编辑月卡————获取月卡详情数据回显
+    async getCardDetailData() {
+      const { data } = await getCardDetailDataAPI(this.id)
+      console.log(data)
+      const { personName, phoneNumber, carNumber, carBrand, carInfoId } = data
+      this.carInfoForm = { personName, phoneNumber, carNumber, carBrand, carInfoId }
+      const { cardStartDate, cardEndDate, paymentAmount, paymentMethod, rechargeId } = data
+      this.feeForm = {
+        payTime: [cardStartDate, cardEndDate],
+        paymentAmount,
+        paymentMethod, rechargeId
+      }
+    },
     validatorCarNumber(rule, value, callback) {
       const platenumberRegex = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领][A-HJ-NP-Z][A-HJ-NP-Z0-9]{4,5}[A-HJ-NP-Z0-9挂学警港澳]$/
       if (platenumberRegex.test(value)) {
@@ -96,9 +119,17 @@ export default {
           // 多字段不行，报400错误
           delete requestData.payTime
           console.log(requestData)
-          const res = await addMonthCardAPI(requestData)
-          console.log(res)
-          this.$message.success('月卡添加成功')
+
+          if (this.id) {
+            // 编辑月卡多携带了两个参数
+            const data = await editorCardAPI(requestData)
+            console.log(data)
+            this.$message.success('月卡编辑成功')
+          } else {
+            const res = await addMonthCardAPI(requestData)
+            console.log(res)
+            this.$message.success('月卡添加成功')
+          }
           this.$router.back()
         })
       })
@@ -116,7 +147,7 @@ export default {
 <template>
   <div class="add-card">
     <header class="add-header">
-      <el-page-header content="增加月卡" @back="$router.back()" />
+      <el-page-header :content="id?'编辑月卡':'添加月卡'" @back="$router.back()" />
     </header>
     <main class="add-main">
       <div class="form-container">
