@@ -29,6 +29,7 @@ export default {
       this.list = res.data
       console.log(this.list)
     },
+
     // 上传图片
 
     async uploadImage({ file }) {
@@ -42,6 +43,19 @@ export default {
       console.log(res)
       this.addForm.businessLicenseUrl = res.data.url
       this.addForm.businessLicenseId = res.data.id
+    },
+    // 上传图片格式进行验证
+    beforeUpload(file) {
+      const imagUrl = ['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)
+      const fileSize = file.size / 1024 / 1024 < 5
+      if (!imagUrl) {
+        this.$message.error('上传合同图片只能是 PNG/JPG/JPEG 格式!')
+        return
+      }
+      if (!fileSize) {
+        this.$message.error('上传合同图片大小不能超过 5MB!')
+        return
+      }
     }
   }
 }
@@ -92,6 +106,7 @@ export default {
               <el-upload
                 action="#"
                 :http-request="uploadImage"
+                :before-upload="beforeUpload"
               >
                 <el-button size="small" type="primary">点击上传</el-button>
                 <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
