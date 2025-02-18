@@ -23,6 +23,11 @@ export const routes = [
 
   },
   {
+    path: '/addEnterprise',
+    component: () => import('@/views/Park/Enterprise/addEnterprise.vue')
+
+  },
+  {
     path: '/workbench',
     component: Layout,
     children: [{

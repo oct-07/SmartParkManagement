@@ -7,3 +7,10 @@ export function getEnterpriseListAPI(params) {
     params
   })
 }
+
+// 获取企业所属行业列表
+export function getIndustryListAPI() {
+  return request({
+    url: '/park/industry'
+  })
+}
