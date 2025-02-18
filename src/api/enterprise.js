@@ -14,3 +14,32 @@ export function getIndustryListAPI() {
     url: '/park/industry'
   })
 }
+
+// 添加企业
+export function addEnterpriseAPI(data) {
+  return request({
+    url: '/park/enterprise',
+    method: 'POST',
+    data
+  })
+}
+// 编辑企业回显
+export function getEnterpriseDetailAPI(id) {
+  return request({
+    url: `/park/enterprise/${id}`
+  })
+}
+
+/**
+ * 更新企业
+ * @param {*} data
+ * @returns
+ */
+export function updateExterpriseAPI(data) {
+  return request({
+    url: '/park/enterprise',
+    method: 'PUT',
+    data
+  })
+}
+

@@ -41,7 +41,14 @@ export default {
     search() {
       this.params.page = 1
       this.getEnterpriseList()
+    },
+    // 编辑表单
+    editorForm(id) {
+      this.$router.push({
+        path: '/addEnterprise', query: { id }
+      })
     }
+
   }
 }
 </script>
@@ -73,7 +80,7 @@ export default {
           <template #default="scope">
             <el-button size="mini" type="text">添加合同</el-button>
             <el-button size="mini" type="text">查看</el-button>
-            <el-button size="mini" type="text">编辑</el-button>
+            <el-button size="mini" type="text" @click="editorForm(scope.row.id)">编辑</el-button>
             <el-button size="mini" type="text">删除</el-button>
           </template>
         </el-table-column>
