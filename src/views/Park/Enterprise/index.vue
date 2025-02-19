@@ -16,11 +16,9 @@ export default {
         buildingId: null, // 楼宇id
         contractId: null, // 合同id
         contractUrl: '', // 合同Url
-        contractName: '', // 合同Url
         enterpriseId: null, // 企业名称
         type: 0, // 合同类型
         rentTime: [] // 合同时间,
-
       },
       rentBuildingList: [
         { id: null, name: '' }
@@ -53,20 +51,24 @@ export default {
       // 触发校验
       this.$refs.addForm.validateField('contractId')
     },
-    // 添加合同
-    addContact(addForm) {
+    // 确定添加合同
+    addContact() {
       // 最后的统一校验
       this.$refs.addForm.validate(async(valid) => {
         if (valid) {
           // 请求数据处理
           const rentData = {
             ...this.rentForm,
-            starTime: this.rentForm.rentTime[0],
+            startTime: this.rentForm.rentTime[0],
             endTime: this.rentForm.rentTime[1]
           }
-          const res = await addRentContactAPI(rentData)
-          console.log('添加成功')
-          console.log(res)
+          delete rentData.rentTime
+          console.log('看看上传的参数')
+          console.log(rentData)
+          await addRentContactAPI(rentData)
+          this.$message.success('添加合同成功')
+          // 关闭弹框清除数据
+          this.closeDialog()
         }
       })
     },
@@ -104,16 +106,18 @@ export default {
         const res = await uploadFileAPI(formData)
         this.rentForm.contractId = res.data.id
         this.rentForm.contractUrl = res.data.url
-        this.rentForm.contractName = res.data.name
+        // this.rentForm.contractName = res.data.name
         // 触发表单校验更新 validateField
         this.$refs.addForm.validateField('contractId')
       } catch (error) {
         this.$message.error('上传失败')
       }
     },
-    // 添加合同--查询可租赁楼宇
-    async addRent() {
+    // 添加合同
+    async addRent(id) {
       this.dialogVisible = true
+      // 收集点击的哪一行
+      this.rentForm.enterpriseId = id
       const res = await getBuildingListAPI()
       this.rentBuildingList = res.data
       console.log('添加合同按钮触发')
@@ -122,6 +126,19 @@ export default {
     // 关闭弹框
     closeDialog() {
       this.dialogVisible = false
+      // 清除提醒
+      this.$refs.addForm.resetFields()
+      // 清除表单内容
+      this.rentForm = {
+        buildingId: null, // 楼宇id
+        contractId: null, // 合同id
+        contractUrl: '', // 合同Url
+        enterpriseId: null, // 企业名称
+        type: 0, // 合同类型
+        rentTime: [] // 合同时间,
+      }
+      // 清除上传的文件
+      this.$refs.upload.clearFiles()
     },
     // 删除企业
     deleteEnterprise(id) {
@@ -246,6 +263,7 @@ export default {
           </el-form-item>
           <el-form-item label="租赁合同" prop="contractId">
             <el-upload
+              ref="upload"
               action="#"
               :http-request="httpRequest"
               :before-upload="beforeUpload"
