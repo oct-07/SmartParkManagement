@@ -1,11 +1,11 @@
 <script>
-import { getEnterpriseListAPI, delelteEnterpriseAPI, getBuildingListAPI, uploadFileAPI, addRentContactAPI } from '@/api/enterprise'
+import { getEnterpriseListAPI, delelteEnterpriseAPI, getBuildingListAPI, addRentContactAPI } from '@/api/enterprise'
+import { uploadFileAPI } from '@/api/common'
 
 export default {
   data() {
     return {
       params: {
-        name: '',
         page: 1,
         pageSize: 2
       },
@@ -16,6 +16,7 @@ export default {
         buildingId: null, // 楼宇id
         contractId: null, // 合同id
         contractUrl: '', // 合同Url
+        contractName: '', // 合同Url
         enterpriseId: null, // 企业名称
         type: 0, // 合同类型
         rentTime: [] // 合同时间,
@@ -45,10 +46,12 @@ export default {
 
   methods: {
     // 移除合同文件
-    onRemove() {
+    onRemove(file) {
+      // 清空表单字段
       this.rentForm.contractId = ''
       this.rentForm.contractUrl = ''
-      this.$refs.addForm.validataFile('contractId')
+      // 触发校验
+      this.$refs.addForm.validateField('contractId')
     },
     // 添加合同
     addContact(addForm) {
@@ -93,16 +96,20 @@ export default {
 
     // 上传合同
     async httpRequest({ file }) {
-      console.log(file)
       const formData = new FormData()
       formData.append('file', file)
-      formData.append('type', 2)
-      const res = await uploadFileAPI(formData)
-      this.rentForm.contractId = res.data.id
-      this.rentForm.contractUrl = res.data.url
-      console.log('能打印码')
-      console.log(res)
-      this.$refs.addForm.validataFile('contractId')
+      formData.append('type', 1)
+
+      try {
+        const res = await uploadFileAPI(formData)
+        this.rentForm.contractId = res.data.id
+        this.rentForm.contractUrl = res.data.url
+        this.rentForm.contractName = res.data.name
+        // 触发表单校验更新 validateField
+        this.$refs.addForm.validateField('contractId')
+      } catch (error) {
+        this.$message.error('上传失败')
+      }
     },
     // 添加合同--查询可租赁楼宇
     async addRent() {
@@ -192,7 +199,7 @@ export default {
         />
         <el-table-column label="操作">
           <template #default="scope">
-            <el-button size="mini" type="text" @click="addRent">添加合同</el-button>
+            <el-button size="mini" type="text" @click="addRent(scope.row.id)">添加合同</el-button>
             <el-button size="mini" type="text">查看</el-button>
             <el-button size="mini" type="text" @click="editorForm(scope.row.id)">编辑</el-button>
             <el-button size="mini" type="text" @click="deleteEnterprise(scope.row.id)">删除</el-button>

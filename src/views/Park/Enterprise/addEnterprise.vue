@@ -70,6 +70,8 @@ export default {
       // 追加用append
       formData.append('file', file)
       formData.append('type', 1)
+      console.log(formData.file)
+
       // 调用方法
       const res = await uploadFileAPI(formData)
       console.log(res)
