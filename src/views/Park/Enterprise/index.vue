@@ -1,5 +1,5 @@
 <script>
-import { getEnterpriseListAPI } from '@/api/enterprise'
+import { getEnterpriseListAPI, delelteEnterpriseAPI } from '@/api/enterprise'
 
 export default {
   data() {
@@ -17,7 +17,24 @@ export default {
     this.getEnterpriseList()
     console.log('获取企业列表数据')
   },
+
   methods: {
+    // 删除企业
+    deleteEnterprise(id) {
+      this.$confirm('你确定要删除吗', '温馨提示').then(async() => {
+        await delelteEnterpriseAPI(id)
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+        if (!this.list.length === 1 && this.params.page < 1) {
+          this.params.page--
+        }
+        this.getEnterpriseList()
+      }).catch(() => {
+
+      })
+    },
     async getEnterpriseList() {
       const res = await getEnterpriseListAPI(this.params)
       console.log(res)
@@ -81,7 +98,7 @@ export default {
             <el-button size="mini" type="text">添加合同</el-button>
             <el-button size="mini" type="text">查看</el-button>
             <el-button size="mini" type="text" @click="editorForm(scope.row.id)">编辑</el-button>
-            <el-button size="mini" type="text">删除</el-button>
+            <el-button size="mini" type="text" @click="deleteEnterprise(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

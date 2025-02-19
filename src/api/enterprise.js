@@ -43,3 +43,11 @@ export function updateExterpriseAPI(data) {
   })
 }
 
+// 删除企业
+export function delelteEnterpriseAPI(id) {
+  return request({
+    url: `/park/enterprise/${id}`,
+    method: 'DELETE'
+  })
+}
+
