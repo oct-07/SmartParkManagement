@@ -28,7 +28,12 @@ service.interceptors.request.use(
 // //执行时机：当服务端返回数据的时候。数据流转的第一站就是响应拦截器.
 service.interceptors.response.use(
   response => {
-    return response.data
+    if (!response.data.code === 10000) {
+      Message.error(response.data.msg)
+      return Promise.reject(response.data)
+    } else {
+      return response.data
+    }
   },
   error => {
     // token失效拦截
