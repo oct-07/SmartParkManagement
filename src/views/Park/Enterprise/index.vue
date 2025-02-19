@@ -10,7 +10,27 @@ export default {
         pageSize: 2
       },
       enterpriseList: [],
-      total: 0
+      total: 0,
+      dialogVisible: false,
+      rentForm: {
+        buildingId: null, // 楼宇id
+        contractId: null, // 合同id
+        contractUrl: '', // 合同Url
+        enterpriseId: null, // 企业名称
+        type: 0, // 合同类型
+        rentTime: [] // 合同时间
+      },
+      rentRules: {
+        buildingId: [
+          { required: true, message: '请选择楼宇', trigger: 'change' }
+        ],
+        rentTime: [
+          { required: true, message: '请选择租赁日期', trigger: 'change' }
+        ],
+        contractId: [
+          { required: true, message: '请上传合同文件', trigger: 'change' }
+        ]
+      }
     }
   },
   created() {
@@ -19,6 +39,14 @@ export default {
   },
 
   methods: {
+    // 添加合同
+    addRent() {
+      this.dialogVisible = true
+    },
+    // 关闭弹框
+    closeDialog() {
+      this.dialogVisible = false
+    },
     // 删除企业
     deleteEnterprise(id) {
       this.$confirm('你确定要删除吗', '温馨提示').then(async() => {
@@ -95,7 +123,7 @@ export default {
         />
         <el-table-column label="操作">
           <template #default="scope">
-            <el-button size="mini" type="text">添加合同</el-button>
+            <el-button size="mini" type="text" @click="addRent">添加合同</el-button>
             <el-button size="mini" type="text">查看</el-button>
             <el-button size="mini" type="text" @click="editorForm(scope.row.id)">编辑</el-button>
             <el-button size="mini" type="text" @click="deleteEnterprise(scope.row.id)">删除</el-button>
@@ -111,7 +139,52 @@ export default {
         @current-change="handleCurrentChange"
       />
     </div>
+    <el-dialog
+      title="添加合同"
+      :visible="dialogVisible"
+      width="30%"
+      :close-on-click-modal="false"
+      @close="closeDialog"
+    >
+      <div class="form-container">
+        <el-form ref="addForm" :model="rentForm" :rules="rentRules" label-position="top">
+          <el-form-item label="租赁楼宇" prop="buildingId">
+            <el-select v-model="rentForm.buildingId" placeholder="请选择">
+              <el-option
+                v-for="item in []"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="租赁起止日期" prop="rentTime">
+            <el-date-picker
+              v-model="rentForm.rentTime"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="yyyy-MM-dd"
+            />
+          </el-form-item>
+          <el-form-item label="租赁合同" prop="contractId">
+            <el-upload
+              action="#"
+            >
+              <el-button size="small" type="primary" plain>上传合同文件</el-button>
+              <div slot="tip" class="el-upload__tip">支持扩展名：.doc .docx .pdf, 文件大小不超过5M</div>
+            </el-upload>
+          </el-form-item>
+        </el-form>
+      </div>
+      <template>
+        <el-button @click="closeDialog">取 消</el-button>
+        <el-button type="primary">确 定</el-button>
+      </template>
+    </el-dialog>
   </div>
+
 </template>
 
 <style lang="scss" scoped>
