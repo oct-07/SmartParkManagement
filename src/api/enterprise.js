@@ -51,3 +51,17 @@ export function delelteEnterpriseAPI(id) {
   })
 }
 
+// 查询可租赁楼宇
+export function getBuildingListAPI() {
+  return request({
+    url: '/park/rent/building'
+  })
+}
+// 添加合同
+export function addRentContactAPI(data) {
+  return request({
+    url: '/park/enterprise/rent',
+    method: 'POST',
+    data
+  })
+}
