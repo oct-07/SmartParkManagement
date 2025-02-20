@@ -23,7 +23,7 @@ export function addEnterpriseAPI(data) {
     data
   })
 }
-// 编辑企业回显
+// 编辑企业回显  企业数据详情
 export function getEnterpriseDetailAPI(id) {
   return request({
     url: `/park/enterprise/${id}`
