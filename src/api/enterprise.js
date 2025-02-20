@@ -65,3 +65,17 @@ export function addRentContactAPI(data) {
     data
   })
 }
+// 查询展开的租赁信息
+export function getEnterpriseRentListAPI(id) {
+  return request({
+    url: `/park/enterprise/rent/${id}`
+  })
+}
+
+// 退租
+export function rentingOutAPI(id) {
+  return request({
+    url: `/park/enterprise/rent/${id}`,
+    method: 'PUT'
+  })
+}
