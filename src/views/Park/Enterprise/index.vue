@@ -269,8 +269,8 @@ export default {
               </el-table-column>
               <el-table-column label="操作" width="180">
                 <template #default="rentObj">
-                  <el-button size="mini" type="text" @click="rentingOut(rentObj.row.id)">退租</el-button>
-                  <el-button size="mini" type="text">删除</el-button>
+                  <el-button size="mini" type="text" :disabled="rentObj.row.status===3" @click="rentingOut(rentObj.row.id)">退租</el-button>
+                  <el-button size="mini" type="text" :disabled="rentObj.row.status!==3">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
