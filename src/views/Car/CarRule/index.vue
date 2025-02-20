@@ -1,5 +1,6 @@
 <script>
 import { getBillingRuleAPI } from '@/api/carrule'
+import { utils, writeFileXLSX } from 'xlsx'
 export default {
   name: 'Building',
   data() {
@@ -16,6 +17,39 @@ export default {
     this.getBillingRule()
   },
   methods: {
+    // 导出excel
+    async exportToExcel() {
+      // 限定导出的字段名
+      // 表头英文字段key
+      const tableHeaderKeys = ['ruleNumber', 'ruleName', 'freeDuration', 'chargeCeiling', 'chargeType', 'ruleNameView']
+      const res = await getBillingRuleAPI(this.params)
+      console.log('导出excel方法里')
+      console.log(res)
+      // 以excel表格的顺序调整后端数据
+      // 声明新对象接收数据
+      const obj = {}
+      const list = res.data.rows.map(item => {
+        tableHeaderKeys.forEach(key => {
+          obj[key] = item[key]
+        })
+        return obj
+      })
+      // 创建一个新的工作簿
+      const workbook = utils.book_new()
+      // 创建一个工作表 要求一个对象数组格式
+      const worksheet = utils.json_to_sheet(
+        list
+      )
+      // 把工作表添加到工作簿  Data为工作表名称
+      utils.book_append_sheet(workbook, worksheet, 'Data')
+
+      // 表头中文字段value
+      const tableHeaderValues = ['计费规则编号', '计费规则名称', '免费时长(分钟)', '收费上线(元)', '计费方式', '计费规则']
+      // 改写表头
+      utils.sheet_add_aoa(worksheet, [tableHeaderValues], { origin: 'A1' })
+      // 导出方法进行导出
+      writeFileXLSX(workbook, 'SheetJSVueAoO.xlsx')
+    },
     // 序列号
     indexMethod(row) {
       return (this.params.page - 1) * this.params.pageSize + row + 1
@@ -40,7 +74,7 @@ export default {
   <div class="rule-container">
     <div class="create-container">
       <el-button type="primary">增加停车计费规则</el-button>
-      <el-button>导出Excel</el-button>
+      <el-button @click="exportToExcel">导出Excel</el-button>
     </div>
     <!-- 表格区域 -->
     <div class="table">
