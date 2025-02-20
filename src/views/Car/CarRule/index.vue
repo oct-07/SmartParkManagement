@@ -16,6 +16,10 @@ export default {
     this.getBillingRule()
   },
   methods: {
+    // 序列号
+    indexMethod(row) {
+      return (this.params.page - 1) * this.params.pageSize + row + 1
+    },
     // 分页
     currentChange(val) {
       console.log(val)
@@ -41,7 +45,7 @@ export default {
     <!-- 表格区域 -->
     <div class="table">
       <el-table :data="ruleList" style="width: 100%">
-        <el-table-column label="序号" type="index" />
+        <el-table-column label="序号" type="index" :index="indexMethod" />
         <el-table-column label="计费规则编号" prop="ruleNumber" />
         <el-table-column label="计费规则名称" prop="ruleName" />
         <el-table-column label="免费时长(分钟)" prop="freeDuration" />
