@@ -1,5 +1,5 @@
 <script>
-import { getEnterpriseListAPI, delelteEnterpriseAPI, getBuildingListAPI, addRentContactAPI } from '@/api/enterprise'
+import { getEnterpriseListAPI, delelteEnterpriseAPI, getBuildingListAPI, addRentContactAPI, getEnterpriseRentListAPI } from '@/api/enterprise'
 import { uploadFileAPI } from '@/api/common'
 
 export default {
@@ -43,6 +43,41 @@ export default {
   },
 
   methods: {
+    // tag颜色
+    formateTage(status) {
+      const tagMap = {
+        0: 'warning',
+        1: 'success',
+        2: 'info',
+        3: 'danger'
+      }
+      return tagMap[status]
+    },
+    // 格式化状态
+    formateStatus(status) {
+      const Map = {
+        0: '待生效',
+        1: '生效中',
+        2: '已到期',
+        3: '已退租'
+      }
+      console.log('状态')
+      console.log(status)
+      return Map[status]
+    },
+    // 展开或关闭触发expandChange事件
+    // row当前行的数据是一个对象，expandedRows数组存放row对象
+    async expandChange(row, expandedRows) {
+      console.log(row, expandedRows)
+      // 现在只需要展开时显示数据，判断row对象在不在expandedRows数组中
+      const includes = expandedRows.find((item) => item.id === row.id)
+      if (!includes) return
+      const res = await getEnterpriseRentListAPI(row.id)
+      // eslint-disable-next-line require-atomic-updates
+      row.rentList = res.data
+      console.log(row.rentList)
+      console.log('存进去了')
+    },
     // 移除合同文件
     onRemove(file) {
       // 清空表单字段
@@ -156,10 +191,16 @@ export default {
 
       })
     },
+
+    // 获取企业列表
     async getEnterpriseList() {
       const res = await getEnterpriseListAPI(this.params)
       console.log(res)
-      this.enterpriseList = res.data.rows
+      // 给列表中每一个数据添加额外属性
+      this.enterpriseList = res.data.rows.map(item => {
+        return { ...item,
+          rentList: [] }
+      })
       this.total = res.data.total
     },
     // 获取用户点击的当前页
@@ -206,7 +247,27 @@ export default {
       <el-table
         style="width: 100%"
         :data="enterpriseList"
+        @expand-change="expandChange"
       >
+        <el-table-column type="expand">
+          <template #default="scope">
+            <el-table :data="scope.row.rentList">
+              <el-table-column label="租赁楼宇" width="320" prop="buildingName" />
+              <el-table-column label="租赁起始时间" prop="startTime">
+                <template #default="rentObj">{{ rentObj.row.startTime }}至{{ rentObj.row.endTime }}</template>
+              </el-table-column>
+              <el-table-column label="合同状态" prop="status">
+                <template #default="rentObj"> <el-tag :type="formateTage(rentObj.row.status)"> {{ formateStatus(rentObj.row.status) }}</el-tag></template>
+              </el-table-column>
+              <el-table-column label="操作" width="180">
+                <template #default="scope">
+                  <el-button size="mini" type="text">退租</el-button>
+                  <el-button size="mini" type="text">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-table-column>
         <el-table-column type="index" label="序号" :index="indexMethod" />
         <el-table-column label="企业名称" width="320" prop="name" />
         <el-table-column label="联系人" prop="contact" />
