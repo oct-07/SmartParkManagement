@@ -6,19 +6,28 @@ export default {
     return {
       params: {
         page: 1,
-        pageSize: 10
+        pageSize: 2
       },
-      ruleList: []
+      ruleList: [],
+      total: 0
     }
   },
   created() {
     this.getBillingRule()
   },
   methods: {
+    // 分页
+    currentChange(val) {
+      console.log(val)
+      this.params.page = val
+      this.getBillingRule()
+    },
     async getBillingRule() {
       const res = await getBillingRuleAPI(this.params)
+      console.log(this.params)
       console.log(res)
       this.ruleList = res.data.rows
+      this.total = res.data.total
     }
   }
 }
@@ -47,7 +56,17 @@ export default {
         </el-table-column>
       </el-table>
     </div>
+    <div>
+      <el-pagination
+        layout="prev, pager, next"
+        :total="total"
+        :page-size="params.pageSize"
+        :current-page="params.page"
+        @current-change="currentChange"
+      />
+    </div>
   </div>
+
 </template>
 
 <style lang="scss" scoped>
