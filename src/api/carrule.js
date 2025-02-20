@@ -1,8 +1,9 @@
 import request from '@/utils/request.js'
 
 // 获取计费规则列表
-export function getBillingRuleAPI() {
+export function getBillingRuleAPI(params) {
   return request({
-    url: '/parking/rule/list'
+    url: '/parking/rule/list',
+    params
   })
 }
