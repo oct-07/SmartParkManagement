@@ -1,5 +1,5 @@
 <script>
-import { getEnterpriseListAPI, delelteEnterpriseAPI, getBuildingListAPI, addRentContactAPI, getEnterpriseRentListAPI } from '@/api/enterprise'
+import { getEnterpriseListAPI, delelteEnterpriseAPI, getBuildingListAPI, addRentContactAPI, getEnterpriseRentListAPI, rentingOutAPI } from '@/api/enterprise'
 import { uploadFileAPI } from '@/api/common'
 
 export default {
@@ -43,6 +43,14 @@ export default {
   },
 
   methods: {
+    // 退租
+    rentingOut(id) {
+      this.$confirm('你确定要退租吗', '温馨提示').then(async() => {
+        await rentingOutAPI(id)
+        console.log('退租成功')
+        this.getEnterpriseList()
+      }).catch(() => {})
+    },
     // tag颜色
     formateTage(status) {
       const tagMap = {
@@ -254,14 +262,14 @@ export default {
             <el-table :data="scope.row.rentList">
               <el-table-column label="租赁楼宇" width="320" prop="buildingName" />
               <el-table-column label="租赁起始时间" prop="startTime">
-                <template #default="rentObj">{{ rentObj.row.startTime }}至{{ rentObj.row.endTime }}</template>
+                <template #default="rentObj">  {{ rentObj.row.startTime }}至{{ rentObj.row.endTime }}</template>
               </el-table-column>
               <el-table-column label="合同状态" prop="status">
                 <template #default="rentObj"> <el-tag :type="formateTage(rentObj.row.status)"> {{ formateStatus(rentObj.row.status) }}</el-tag></template>
               </el-table-column>
               <el-table-column label="操作" width="180">
-                <template #default="scope">
-                  <el-button size="mini" type="text">退租</el-button>
+                <template #default="rentObj">
+                  <el-button size="mini" type="text" @click="rentingOut(rentObj.row.id)">退租</el-button>
                   <el-button size="mini" type="text">删除</el-button>
                 </template>
               </el-table-column>
