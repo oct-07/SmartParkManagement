@@ -7,3 +7,12 @@ export function getBillingRuleAPI(params) {
     params
   })
 }
+// 添加计费规则
+
+export function addBillingRuleAPI(data) {
+  return request({
+    url: '/parking/rule',
+    method: 'POST',
+    data
+  })
+}

@@ -1,8 +1,12 @@
 <script>
 import { getBillingRuleAPI } from '@/api/carrule'
 import { utils, writeFileXLSX } from 'xlsx'
+import AddRule from './components/AddRule.vue'
 export default {
   name: 'Building',
+  components: {
+    AddRule
+  },
   data() {
     return {
       params: {
@@ -10,13 +14,29 @@ export default {
         pageSize: 2
       },
       ruleList: [],
-      total: 0
+      total: 0,
+
+      dialogVisible: false
     }
   },
   created() {
     this.getBillingRule()
   },
   methods: {
+    // 打开弹框
+    openDialog() {
+      console.log('打开')
+      this.dialogVisible = true
+    },
+    // 格式化
+    formateChargeType(chargeType) {
+      const MAP = {
+        'duration': '按时长收费',
+        'turn': '按次收费',
+        'partition': '分段收费'
+      }
+      return MAP[chargeType]
+    },
     // 导出excel
     async exportToExcel() {
       // 限定导出的字段名
@@ -73,7 +93,7 @@ export default {
 <template>
   <div class="rule-container">
     <div class="create-container">
-      <el-button type="primary">增加停车计费规则</el-button>
+      <el-button type="primary" @click="openDialog">增加停车计费规则</el-button>
       <el-button @click="exportToExcel">导出Excel</el-button>
     </div>
     <!-- 表格区域 -->
@@ -84,7 +104,11 @@ export default {
         <el-table-column label="计费规则名称" prop="ruleName" />
         <el-table-column label="免费时长(分钟)" prop="freeDuration" />
         <el-table-column label="收费上限(元)" prop="chargeCeiling" />
-        <el-table-column label="计费方式" prop="chargeType" />
+        <el-table-column label="计费方式" prop="chargeType">
+          <template #default="scope">
+            {{ formateChargeType(scope.row.chargeType) }}
+          </template>
+        </el-table-column>
         <el-table-column label="计费规则" prop="ruleNameView" />
         <el-table-column label="操作" fixed="right" width="120">
           <template #default="scope">
@@ -103,11 +127,16 @@ export default {
         @current-change="currentChange"
       />
     </div>
+    <!-- 弹框 -->
+    <AddRule :dialog-visible.sync="dialogVisible" @getBilling="getBillingRule" />
   </div>
 
 </template>
 
 <style lang="scss" scoped>
+.form-container{
+  padding:0px 80px;
+}
 .rule-container {
   padding: 20px;
   background-color: #fff;
