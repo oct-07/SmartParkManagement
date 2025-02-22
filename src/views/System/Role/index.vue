@@ -1,18 +1,30 @@
 <script>
-import { getRoleListAPI } from '@/api/role'
+import { getRoleListAPI, getPermissionTreeAPI } from '@/api/role'
 export default {
   name: 'Role',
   data() {
     return {
       roleList: [],
-      activeIndex: 0
+      activeIndex: 0,
+      treeList: [],
+      defaultProps: {
+
+        label: 'title'
+      }
 
     }
   },
   created() {
     this.getRoleList()
+    this.getPermissionTree()
   },
   methods: {
+    // 查询所有功能权限树状
+    async getPermissionTree() {
+      const res = await getPermissionTreeAPI()
+      console.log(res)
+      this.treeList = res.data
+    },
     // 点击菜单高亮
     menuChange(index) {
       // 将点击的高亮索引收集起来
@@ -41,6 +53,19 @@ export default {
         </div>
       </div>
       <el-button class="addBtn" size="mini">添加角色</el-button>
+    </div>
+    <div class="right-wrapper">
+      <div class="tree-wrapper">
+        <div v-for="item in treeList" :key="item.id" class="tree-item">
+          <div class="tree-title"> {{ item.title }} </div>
+          <el-tree
+            :data="item.children"
+            :props="defaultProps"
+            :default-expand-all="true"
+            show-checkbox
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
