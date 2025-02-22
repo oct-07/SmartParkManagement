@@ -1,5 +1,5 @@
 <script>
-import { getRoleListAPI, getPermissionTreeAPI } from '@/api/role'
+import { getRoleListAPI, getPermissionTreeAPI, getRoleDetailAPI, getRoleUserAPI } from '@/api/role'
 export default {
   name: 'Role',
   data() {
@@ -8,27 +8,86 @@ export default {
       activeIndex: 0,
       treeList: [],
       defaultProps: {
+        disabled: function() {
+          return true
+        },
+        label: 'title',
+        activeName: '',
+        params: {
+          pageSize: 2,
+          page: 1
+        },
+        total: 0,
+        userList: []
 
-        label: 'title'
       }
-
     }
   },
-  created() {
-    this.getRoleList()
-    this.getPermissionTree()
+  async created() {
+    // 这两个方法是异步,所以menuChange会报错roleId未定义,加await就会内部同步
+    await this.getRoleList()
+    await this.getPermissionTree()
+
+    this.menuChange(0)
   },
   methods: {
+    // 获取菜单角色对应权限列表
+    async  getRoleUserList(id) {
+      const res = await getRoleUserAPI(id)
+      console.log('角色成员')
+      console.log(res)
+      this.total = res.data.total
+      this.userList = res.data.rows
+    },
+    // 权限树状复选框禁用
+    // 1.递归添加disable
+    // addDisable(treeList) {
+    //   treeList.forEach(item => {
+    //     item.disabled = true
+    //     // 下一级也要调用
+    //     if (item.children) {
+    //       this.addDisable(item.children)
+    //     }
+    //   })
+    // },
     // 查询所有功能权限树状
     async getPermissionTree() {
       const res = await getPermissionTreeAPI()
+      console.log('查看权限树状')
       console.log(res)
       this.treeList = res.data
+      // this.addDisable(this.treeList)
     },
     // 点击菜单高亮
-    menuChange(index) {
+    async menuChange(index) {
       // 将点击的高亮索引收集起来
       this.activeIndex = index
+      // 拿到的index就是数组roleList的index
+      const id = this.roleList[index].roleId
+
+      // 获取菜单角色对应权限列表
+      const res = await getRoleDetailAPI(id)
+      console.log('角色详情')
+      console.log(res)
+
+      // 获取菜单角色对应成员列表
+      this.getRoleUserList(id, this.params)
+
+      // 树状权限回显
+      // el-tree包裹在v-for里面，循环了5个，有5个组件
+      const treeComponentsList = this.$refs.tree
+      // treeComponentsList数组
+      // [VueComponent, VueComponent, VueComponent, VueComponent, VueComponent]
+      console.log(treeComponentsList)
+      // 回显的权限数组
+      const perms = res.data.perms
+      console.log('打印pems')
+      console.log(perms)
+      console.log('获取tree')
+
+      treeComponentsList.forEach((tree, index) => {
+        tree.setCheckedKeys(perms[index])
+      })
     },
     // 获取角色列表
     async getRoleList() {
@@ -37,6 +96,7 @@ export default {
       this.roleList = res.data
     }
   }
+
 }
 </script>
 <template>
@@ -52,20 +112,47 @@ export default {
           <svg-icon icon-class="more" />
         </div>
       </div>
-      <el-button class="addBtn" size="mini">添加角色</el-button>
+      <el-button class="addBtn" size="mini" @click="$router.push('/sys/addRole')">添加角色</el-button>
     </div>
     <div class="right-wrapper">
-      <div class="tree-wrapper">
-        <div v-for="item in treeList" :key="item.id" class="tree-item">
-          <div class="tree-title"> {{ item.title }} </div>
-          <el-tree
-            :data="item.children"
-            :props="defaultProps"
-            :default-expand-all="true"
-            show-checkbox
-          />
-        </div>
-      </div>
+      <el-tabs v-model="activeName">
+        <el-tab-pane label="权限管理" name="permision"> <div class="tree-wrapper">
+          <div v-for="item in treeList" :key="item.id" class="tree-item">
+            <div class="tree-title"> {{ item.title }} </div>
+            <el-tree
+              ref="tree"
+              node-key="id"
+              :data="item.children"
+              :props="defaultProps"
+              :default-expand-all="true"
+              show-checkbox
+            />
+          </div>
+        </div></el-tab-pane>
+        <el-tab-pane :label="`成员(${total})`" name="user">
+          <div class="user-wrapper">
+            <el-table
+              :data="userList"
+              style="width: 100%"
+            >
+              <el-table-column
+                type="index"
+                width="250"
+                label="序号"
+              />
+              <el-table-column
+                prop="name"
+                label="员工姓名"
+              />
+              <el-table-column
+                prop="userName"
+                label="登录账号"
+              />
+            </el-table>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+
     </div>
   </div>
 </template>

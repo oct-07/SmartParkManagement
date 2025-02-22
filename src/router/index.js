@@ -118,6 +118,11 @@ export const routes = [
     }]
   },
   {
+    path: '/sys/addRole',
+    component: () => import('@/views/System/Role/components/AddRole.vue'),
+    hidden: true
+  },
+  {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
