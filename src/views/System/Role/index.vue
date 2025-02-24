@@ -1,5 +1,5 @@
 <script>
-import { getRoleListAPI, getPermissionTreeAPI, getRoleDetailAPI, getRoleUserAPI } from '@/api/role'
+import { getRoleListAPI, getPermissionTreeAPI, getRoleDetailAPI, getRoleUserAPI, deleteRoleAPI } from '@/api/role'
 export default {
   name: 'Role',
   data() {
@@ -12,15 +12,14 @@ export default {
           return true
         },
         label: 'title',
-        activeName: '',
-        params: {
-          pageSize: 2,
-          page: 1
-        },
-        total: 0,
-        userList: []
-
-      }
+        activeName: ''
+      },
+      params: {
+        pageSize: 2,
+        page: 1
+      },
+      total: 0,
+      userList: []
     }
   },
   async created() {
@@ -31,6 +30,16 @@ export default {
     this.menuChange(0)
   },
   methods: {
+    // 删除角色
+    deleteRole(id) {
+      this.$confirm('你确定要删除吗', '温馨提示').then(async() => {
+        await deleteRoleAPI(id)
+        this.$message.success('删除成功')
+        this.getRoleList()
+      }).catch(() => {
+
+      })
+    },
     // 获取菜单角色对应权限列表
     async  getRoleUserList(id) {
       const res = await getRoleUserAPI(id)
@@ -109,26 +118,36 @@ export default {
             roleName }}
         </div>
         <div class="more">
-          <svg-icon icon-class="more" />
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              <svg-icon icon-class="more" />
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="$router.push(`/sys/addRole?id=${item.roleId}`)">编辑角色</el-dropdown-item>
+              <el-dropdown-item @click.native="deleteRole(item.roleId)">删除</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </div>
       </div>
       <el-button class="addBtn" size="mini" @click="$router.push('/sys/addRole')">添加角色</el-button>
     </div>
     <div class="right-wrapper">
       <el-tabs v-model="activeName">
-        <el-tab-pane label="权限管理" name="permision"> <div class="tree-wrapper">
-          <div v-for="item in treeList" :key="item.id" class="tree-item">
-            <div class="tree-title"> {{ item.title }} </div>
-            <el-tree
-              ref="tree"
-              node-key="id"
-              :data="item.children"
-              :props="defaultProps"
-              :default-expand-all="true"
-              show-checkbox
-            />
+        <el-tab-pane label="权限管理" name="permision">
+          <div class="tree-wrapper">
+            <div v-for="item in treeList" :key="item.id" class="tree-item">
+              <div class="tree-title"> {{ item.title }} </div>
+              <el-tree
+                ref="tree"
+                node-key="id"
+                :data="item.children"
+                :props="defaultProps"
+                :default-expand-all="true"
+                show-checkbox
+              />
+            </div>
           </div>
-        </div></el-tab-pane>
+        </el-tab-pane>
         <el-tab-pane :label="`成员(${total})`" name="user">
           <div class="user-wrapper">
             <el-table
