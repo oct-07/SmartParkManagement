@@ -78,7 +78,7 @@ export default {
       <el-button type="primary" @click="search">查询</el-button>
     </div>
     <div class="create-container">
-      <el-button type="primary" @click="$router.push('/addEnterprise')">添加企业</el-button>
+      <el-button v-permission="'park:enterprise:add_edit'" type="primary" @click="$router.push('/addEnterprise')">添加企业</el-button>
     </div>
     <!-- 表格区域 -->
     <div class="table">
@@ -95,10 +95,10 @@ export default {
         />
         <el-table-column label="操作">
           <template #default="scope">
-            <el-button size="mini" type="text">添加合同</el-button>
-            <el-button size="mini" type="text">查看</el-button>
-            <el-button size="mini" type="text" @click="editorForm(scope.row.id)">编辑</el-button>
-            <el-button size="mini" type="text" @click="deleteEnterprise(scope.row.id)">删除</el-button>
+            <el-button v-permission="'park:rent:add_surrender'" size="mini" type="text">添加合同</el-button>
+            <el-button v-permission="'park:enterprise:query'" size="mini" type="text">查看</el-button>
+            <el-button v-permission="'park:enterprise:add_edit'" size="mini" type="text" @click="editorForm(scope.row.id)">编辑</el-button>
+            <el-button v-permission="'park:enterprise:remove'" size="mini" type="text" @click="deleteEnterprise(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

@@ -14,3 +14,16 @@ export function loginAPI(data) {
     data
   })
 }
+
+// 前端权限控制=菜单
+/**
+ * @description: 获取用户信息
+ * @param {*} data {}
+ * @return {*} promise
+ */
+export function getProfileAPI() {
+  return request({
+    url: '/park/user/profile',
+    method: 'GET'
+  })
+}
