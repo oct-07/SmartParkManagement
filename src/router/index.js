@@ -28,6 +28,11 @@ export const routes = [
 
   },
   {
+    path: '/enterpriseDetail/:id',
+    component: () => import('@/views/Park/Enterprise/EnterpriseDetail.vue')
+
+  },
+  {
     path: '/workbench',
     component: Layout,
     children: [{

@@ -23,7 +23,7 @@ export function addEnterpriseAPI(data) {
     data
   })
 }
-// 编辑企业回显
+// 编辑企业回显  企业数据详情
 export function getEnterpriseDetailAPI(id) {
   return request({
     url: `/park/enterprise/${id}`
@@ -51,3 +51,31 @@ export function delelteEnterpriseAPI(id) {
   })
 }
 
+// 查询可租赁楼宇
+export function getBuildingListAPI() {
+  return request({
+    url: '/park/rent/building'
+  })
+}
+// 添加合同
+export function addRentContactAPI(data) {
+  return request({
+    url: '/park/enterprise/rent',
+    method: 'POST',
+    data
+  })
+}
+// 查询展开的租赁信息
+export function getEnterpriseRentListAPI(id) {
+  return request({
+    url: `/park/enterprise/rent/${id}`
+  })
+}
+
+// 退租
+export function rentingOutAPI(id) {
+  return request({
+    url: `/park/enterprise/rent/${id}`,
+    method: 'PUT'
+  })
+}
