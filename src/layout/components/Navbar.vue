@@ -29,6 +29,8 @@ export default {
     logout() {
       // 清除token信息
       this.$store.commit('user/removeToken')
+      // 清除路由
+      this.$store.commit('menu/clearRoutes')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
       console.log(this.$route.fullPath)
       console.log('清除token')
