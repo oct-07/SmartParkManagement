@@ -4,7 +4,7 @@ import { Message } from 'element-ui'
 import router from '@/router'
 // axios.create() 方法用于创建一个自定义的 Axios 实例，返回一个 Axios 实例对象，并将其赋值给 service。
 const service = axios.create({
-  baseURL: 'https://api-hmzs.itheima.net/v1',
+  baseURL: process.env.VUE_APP_BASE_API,
   timeout: 5000 // request timeout
 })
 

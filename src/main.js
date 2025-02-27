@@ -21,6 +21,9 @@ import '@/icons'
 // 导入自定义指令
 import '@/directive'
 
+// 导入微前端
+import './registerMicroApp'
+
 // vue插件，把element-ui中导出的所有组件注册成全局组件
 Vue.use(ElementUI)
 

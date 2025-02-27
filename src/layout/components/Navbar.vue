@@ -1,6 +1,7 @@
 <template>
   <div class="navbar">
     <div class="right-menu">
+      <el-button class="name" @click="$router.push('/big-screen')">跳转到可视化大屏幕</el-button>
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <!-- 用户名称 -->
@@ -120,8 +121,10 @@ export default {
         margin-top: 5px;
         position: relative;
         .name{
+          margin-left: 10px;
           font-weight: 600;
           cursor: pointer;
+
         }
       }
     }

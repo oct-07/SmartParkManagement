@@ -57,7 +57,7 @@ export const routes = [
 // 创建vue实例
 const createRouter = () => new Router({
   // mode: 'history', // require service support
-  mode: 'history',
+  mode: 'hash',
   // 切换的时候处于顶端
   scrollBehavior: () => ({ y: 0 }),
   //  路由配置规则
